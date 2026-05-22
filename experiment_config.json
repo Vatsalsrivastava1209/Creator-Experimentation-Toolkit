@@ -1,0 +1,24 @@
+{
+  "experiment_name": "Question vs Statement Tweet Hooks",
+  "variant_labels": {
+    "A": "Question hook",
+    "B": "Statement hook"
+  },
+  "metric_columns": ["likes", "replies", "reposts", "bookmarks"],
+  "primary_metric": "engagement",
+  "control_variant": "A",
+  "treatment_variant": "B",
+  "alpha": 0.05,
+  "bootstrap_iterations": 5000,
+  "random_seed": 42,
+  "randomization_method": "stratified_block",
+  "posting_time": "09:00:00",
+  "posting_frequency": "one_tweet_per_day",
+  "observation_window_hours": 48,
+  "minimum_sample_size_per_variant": 17,
+  "minimum_practical_lift": 0.1,
+  "schedule_path": "tweet_schedule.csv",
+  "results_path": "data/experiment_results.csv",
+  "report_json_path": "reports/analysis_summary.json",
+  "report_markdown_path": "reports/analysis_summary.md"
+}

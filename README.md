@@ -1,45 +1,78 @@
-# Tweet Experiment: A/B Testing on X
+# Creator Experimentation Toolkit
 
-## Overview
+A product experimentation framework applied to creator analytics.
 
-This project is a notebook-first A/B testing workflow for measuring whether
-question-based tweet hooks outperform statement-based tweet hooks on an X
-(Twitter) creator account.
+This project shows how A/B testing practices from product analytics can be used
+to test creator-content decisions with controlled assignment, validation,
+statistical testing, reports, and a dashboard.
 
-The repo demonstrates a reproducible experimentation flow:
+## Why This Exists
 
-- power analysis
-- randomized assignment
-- metric collection
-- input validation
-- frequentist analysis
-- optional Bayesian and Thompson sampling analysis
+X Analytics reports what happened to each post. This project tests whether a
+specific controlled change likely caused a difference.
 
-## Hypothesis
+The current experiment compares:
 
-If tweets start with a question hook, then engagement will increase compared
-with a statement hook because questions can trigger curiosity and encourage
-replies.
+- Variant A: question-based hooks
+- Variant B: statement-based hooks
+
+The committed `data/experiment_results.csv` file is synthetic sample data so the
+project runs from a fresh clone. Use `data/real_experiment_results.csv` for real
+tweet metrics before making real recommendations.
+
+## What This Project Does
+
+- Builds a deterministic 34-day stratified/block-randomized schedule.
+- Controls avoidable bias from posting time, topic, media usage, and weekday mix.
+- Validates schedule and result files before analysis.
+- Computes engagement from likes, replies, reposts, and bookmarks.
+- Reports Welch's t-test, Mann-Whitney U test, Cohen's d, lift, and bootstrap
+  confidence intervals.
+- Applies a predeclared decision rule so the winner is not chosen by vibes.
+- Exports Markdown and JSON reports.
+- Provides a Streamlit dashboard for portfolio-ready exploration.
+- Documents a safe manual-first data ingestion path and an official API scaffold.
+
+## Resume Highlights
+
+- Built a reproducible A/B testing toolkit for creator analytics using Python,
+  pandas, scipy, Streamlit, and pytest.
+- Designed a 34-day stratified experiment controlling for posting time, topic,
+  media usage, and weekday bias.
+- Implemented automated validation for experiment schema, randomization balance,
+  metric integrity, and schedule/result consistency.
+- Added Welch's t-test, Mann-Whitney U test, Cohen's d, bootstrap confidence
+  intervals, and decision rules for winner selection.
+- Built a Streamlit dashboard and CLI reports to communicate experiment results
+  and statistical uncertainty.
 
 ## Repository Structure
 
 ```text
 .
+|-- app.py
+|-- analyze_experiment.py
+|-- experiment_analysis.py
+|-- experiment_config.json
+|-- validate_experiment.py
+|-- case_study.md
+|-- tweet_schedule.csv
+|-- data/
+|   |-- experiment_results.csv
+|   |-- real_experiment_results.csv
+|   `-- post_evidence/
+|-- data_ingestion/
+|   |-- README.md
+|   `-- x_api_ingest_stub.py
+|-- reports/
+|-- tests/
+|-- .github/workflows/ci.yml
 |-- Analysis.ipynb
 |-- Power Analysis.ipynb
 |-- bayesian_analysis.ipynb
 |-- randomization.ipynb
-|-- thompson_sampling.ipynb
-|-- data/
-|   `-- experiment_results.csv
-|-- requirements.txt
-|-- tweet_schedule.csv
-`-- validate_experiment.py
+`-- thompson_sampling.ipynb
 ```
-
-The committed `data/experiment_results.csv` is synthetic sample data so the
-notebooks and validator can run from a fresh clone. Replace it with real tweet
-metrics before drawing conclusions.
 
 ## Setup
 
@@ -49,75 +82,126 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-On macOS or Linux, activate the environment with:
+On macOS or Linux:
 
 ```bash
 source .venv/bin/activate
 ```
 
-## Workflow
+## Core Workflow
 
-1. Run `Power Analysis.ipynb` to confirm the target sample size.
-2. Run `randomization.ipynb` to generate a deterministic tweet schedule.
-3. Post tweets according to `tweet_schedule.csv`.
-4. Replace `data/experiment_results.csv` with real results using this schema:
+1. Edit `experiment_config.json` if the experiment name, variants, thresholds,
+   or file paths change.
+2. Use `tweet_schedule.csv` to plan the 34 posts.
+3. Post one tweet per day at the same chosen peak time.
+4. Record metrics after the same observation window, configured as 48 hours.
+5. Fill `data/real_experiment_results.csv` with real metrics.
+6. Add real post screenshots under `data/post_evidence/`.
+7. Validate the real data:
 
-```csv
-tweet_number,variant,likes,replies,reposts,bookmarks
-1,A,3,1,0,0
-2,B,5,2,1,0
+```bash
+python validate_experiment.py --results data/real_experiment_results.csv
 ```
 
-5. Validate the schedule and results:
+8. Analyze the real data:
+
+```bash
+python analyze_experiment.py --results data/real_experiment_results.csv
+```
+
+9. Open the dashboard:
+
+```bash
+streamlit run app.py
+```
+
+For demo/sample mode, use:
 
 ```bash
 python validate_experiment.py
+python analyze_experiment.py
 ```
-
-6. Run `Analysis.ipynb` for the primary Welch's t-test analysis.
-7. Optionally run `bayesian_analysis.ipynb` and `thompson_sampling.ipynb`.
 
 ## Data Contract
 
-`data/experiment_results.csv` must include:
+Both `tweet_schedule.csv` and results files use this schema:
 
-- `tweet_number`: positive integer, unique, and present in `tweet_schedule.csv`
-- `variant`: `A` or `B`, matching the scheduled assignment
-- `likes`: non-negative integer-like value
-- `replies`: non-negative integer-like value
-- `reposts`: non-negative integer-like value
-- `bookmarks`: non-negative integer-like value
-
-Optional future columns include `tweet_id`, `posted_at`, `scheduled_at`,
-`content_id`, and `status`.
-
-Engagement is calculated consistently as:
-
-```python
-df["engagement"] = (
-    df["likes"] + df["replies"] + df["reposts"] + df["bookmarks"]
-)
+```csv
+tweet_number,variant,scheduled_at,posted_at,tweet_id,tweet_url,hook_text,topic,content_type,is_thread,has_image,likes,replies,reposts,bookmarks,status
 ```
 
-## Statistical Analysis
+Validation rules:
 
-The primary analysis compares mean engagement between variants with Welch's
-two-sample t-test:
+- `tweet_number` must be a positive integer and unique.
+- `variant` must be `A` or `B`.
+- `scheduled_at` and `posted_at`, when present, must be ISO-8601 datetimes.
+- `tweet_url`, when present, must be a valid `http` or `https` URL.
+- `is_thread` and `has_image` must be `true` or `false`.
+- Engagement metrics must be integer-like, non-null, and non-negative in the
+  results file.
+- Result rows must match the scheduled assignment and metadata.
+- The schedule must contain one tweet per day across 34 consecutive days.
+- Every scheduled post must use the same posting time, currently `09:00:00`.
+- Topics and image/no-image strata must have equal A/B counts.
+- Day-of-week A/B counts must differ by no more than one.
 
-- `p < 0.05`: statistically significant difference
-- `p >= 0.05`: no statistically significant difference
+## Experiment Protocol
 
-The analysis notebook also reports group counts, means, confidence intervals,
-and effect size so the result is not interpreted from p-value alone.
+The schedule uses stratified/block randomization instead of a plain shuffle:
+
+- 34 total days
+- one tweet per day
+- one fixed peak posting time
+- 17 question-hook tweets and 17 statement-hook tweets
+- each topic block has one A and one B post
+- image/no-image conditions are balanced across A and B
+- weekday exposure is balanced as closely as mathematically possible
+- metrics are recorded after a fixed 48-hour observation window
+
+This reduces avoidable bias from posting time, topic mix, media format, and
+day-of-week effects.
+
+## Analysis Outputs
+
+`python analyze_experiment.py` writes:
+
+- `reports/analysis_summary.json`
+- `reports/analysis_summary.md`
+
+The report includes sample size, mean, median, standard deviation, lift,
+Welch's t-test, Mann-Whitney U test, Cohen's d, bootstrap confidence intervals,
+and recommendation status.
+
+## Data Ingestion Positioning
+
+Manual CSV entry is the default and safest path. Scraping is intentionally
+unsupported because it can be brittle, violate platform expectations, and create
+account risk. Official X API ingestion can be added later for users with
+approved credentials; see `data_ingestion/`.
+
+## Case Study
+
+Read `case_study.md` for the portfolio narrative:
+
+- hypothesis
+- design
+- bias controls
+- data collection protocol
+- methods
+- results
+- recommendation
+- limitations
+- next test
 
 ## Limitations
 
-- The experiment has a small sample size of 34 tweets.
-- Tweet engagement is noisy and can be affected by time of day, topic,
-  audience availability, and platform distribution.
-- Engagement counts are skewed discrete outcomes, so the t-test should be read
-  alongside effect size, confidence intervals, and the optional Bayesian view.
-- The sample results file is not evidence about the real account.
+- The committed result rows are synthetic sample data.
+- A 34-post experiment is useful for learning, but confidence intervals can
+  still be wide.
+- Engagement counts are skewed and sensitive to timing, topic, audience mood,
+  and platform distribution.
+- The analysis identifies evidence for this experiment only. It does not prove
+  that one hook style will always win.
 
 ## Author
 

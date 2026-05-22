@@ -6,24 +6,60 @@ import argparse
 import csv
 import sys
 from collections import Counter
+from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlparse
 
 
-REQUIRED_RESULT_COLUMNS = {
+ALL_COLUMNS = {
     "tweet_number",
     "variant",
+    "scheduled_at",
+    "posted_at",
+    "tweet_id",
+    "tweet_url",
+    "hook_text",
+    "topic",
+    "content_type",
+    "is_thread",
+    "has_image",
     "likes",
     "replies",
     "reposts",
     "bookmarks",
+    "status",
 }
+SCHEDULE_REQUIRED_NONEMPTY = {
+    "tweet_number",
+    "variant",
+    "scheduled_at",
+    "hook_text",
+    "topic",
+    "content_type",
+    "is_thread",
+    "has_image",
+    "status",
+}
+RESULT_REQUIRED_NONEMPTY = ALL_COLUMNS
 METRIC_COLUMNS = ("likes", "replies", "reposts", "bookmarks")
+BOOLEAN_COLUMNS = ("is_thread", "has_image")
+METADATA_JOIN_COLUMNS = (
+    "variant",
+    "scheduled_at",
+    "hook_text",
+    "topic",
+    "content_type",
+    "is_thread",
+    "has_image",
+)
 VALID_VARIANTS = {"A", "B"}
+VALID_STATUSES = {"scheduled", "posted", "sample", "draft"}
 EXPECTED_TWEETS = 34
 EXPECTED_PER_VARIANT = 17
+EXPECTED_POSTING_TIME = "09:00:00"
 
 
-def read_csv(path: Path) -> list[dict[str, str]]:
+def read_csv(path: Path) -> tuple[list[str], list[dict[str, str]]]:
     if not path.exists():
         raise ValueError(f"Missing required file: {path}")
 
@@ -31,7 +67,19 @@ def read_csv(path: Path) -> list[dict[str, str]]:
         reader = csv.DictReader(file)
         if reader.fieldnames is None:
             raise ValueError(f"{path} is empty or missing a header row")
-        return list(reader)
+        return reader.fieldnames, list(reader)
+
+
+def require_columns(path: Path, fieldnames: list[str], required: set[str]) -> None:
+    missing = required - set(fieldnames)
+    if missing:
+        raise ValueError(f"{path}: missing columns {sorted(missing)}")
+
+
+def require_nonempty(row: dict[str, str], columns: set[str], path: Path, row_number: int) -> None:
+    for column in columns:
+        if row.get(column) is None or row.get(column, "").strip() == "":
+            raise ValueError(f"{path} row {row_number}: {column} is required")
 
 
 def parse_tweet_number(value: str, path: Path, row_number: int) -> int:
@@ -63,38 +111,108 @@ def validate_metric(value: str, column: str, path: Path, row_number: int) -> Non
         raise ValueError(f"{path} row {row_number}: {column} must be integer-like")
 
 
-def validate_schedule(schedule_path: Path) -> dict[int, str]:
-    rows = read_csv(schedule_path)
+def validate_datetime(value: str, column: str, path: Path, row_number: int) -> None:
+    if not value:
+        return
+    try:
+        datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError(
+            f"{path} row {row_number}: {column} must be ISO-8601 datetime"
+        ) from exc
+
+
+def parse_datetime(value: str, column: str, path: Path, row_number: int) -> datetime:
+    try:
+        return datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError(
+            f"{path} row {row_number}: {column} must be ISO-8601 datetime"
+        ) from exc
+
+
+def validate_url(value: str, path: Path, row_number: int) -> None:
+    if not value:
+        return
+    parsed = urlparse(value)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise ValueError(f"{path} row {row_number}: tweet_url must be a valid URL")
+
+
+def validate_boolean(value: str, column: str, path: Path, row_number: int) -> str:
+    normalized = value.strip().lower()
+    if normalized not in {"true", "false"}:
+        raise ValueError(f"{path} row {row_number}: {column} must be true or false")
+    return normalized
+
+
+def validate_common_fields(
+    row: dict[str, str],
+    path: Path,
+    row_number: int,
+    required_nonempty: set[str],
+) -> tuple[int, str]:
+    require_nonempty(row, required_nonempty, path, row_number)
+    tweet_number = parse_tweet_number(row.get("tweet_number", ""), path, row_number)
+    variant = row.get("variant", "").strip()
+    status = row.get("status", "").strip()
+
+    if variant not in VALID_VARIANTS:
+        raise ValueError(f"{path} row {row_number}: variant must be A or B")
+    if status and status not in VALID_STATUSES:
+        raise ValueError(
+            f"{path} row {row_number}: status must be one of {sorted(VALID_STATUSES)}"
+        )
+
+    validate_datetime(row.get("scheduled_at", "").strip(), "scheduled_at", path, row_number)
+    validate_datetime(row.get("posted_at", "").strip(), "posted_at", path, row_number)
+    validate_url(row.get("tweet_url", "").strip(), path, row_number)
+    for column in BOOLEAN_COLUMNS:
+        validate_boolean(row.get(column, ""), column, path, row_number)
+
+    return tweet_number, variant
+
+
+def validate_schedule(schedule_path: Path) -> dict[int, dict[str, str]]:
+    fieldnames, rows = read_csv(schedule_path)
+    require_columns(schedule_path, fieldnames, ALL_COLUMNS)
+
     if len(rows) != EXPECTED_TWEETS:
         raise ValueError(
             f"{schedule_path}: expected {EXPECTED_TWEETS} rows, found {len(rows)}"
         )
 
-    required_columns = {"tweet_number", "variant"}
-    missing_columns = required_columns - set(rows[0].keys())
-    if missing_columns:
-        raise ValueError(
-            f"{schedule_path}: missing columns {sorted(missing_columns)}"
-        )
-
-    schedule: dict[int, str] = {}
+    schedule: dict[int, dict[str, str]] = {}
     variant_counts: Counter[str] = Counter()
+    scheduled_datetimes: list[datetime] = []
+    weekday_variant_counts: dict[int, Counter[str]] = {}
+    topic_variant_counts: dict[str, Counter[str]] = {}
+    image_variant_counts: dict[str, Counter[str]] = {}
 
     for row_number, row in enumerate(rows, start=2):
-        tweet_number = parse_tweet_number(row.get("tweet_number", ""), schedule_path, row_number)
-        variant = row.get("variant", "").strip()
-
-        if variant not in VALID_VARIANTS:
-            raise ValueError(
-                f"{schedule_path} row {row_number}: variant must be A or B"
-            )
+        tweet_number, variant = validate_common_fields(
+            row,
+            schedule_path,
+            row_number,
+            SCHEDULE_REQUIRED_NONEMPTY,
+        )
         if tweet_number in schedule:
             raise ValueError(
                 f"{schedule_path} row {row_number}: duplicate tweet_number {tweet_number}"
             )
 
-        schedule[tweet_number] = variant
+        schedule[tweet_number] = row
         variant_counts[variant] += 1
+        scheduled_at = parse_datetime(
+            row.get("scheduled_at", "").strip(),
+            "scheduled_at",
+            schedule_path,
+            row_number,
+        )
+        scheduled_datetimes.append(scheduled_at)
+        weekday_variant_counts.setdefault(scheduled_at.weekday(), Counter())[variant] += 1
+        topic_variant_counts.setdefault(row["topic"].strip(), Counter())[variant] += 1
+        image_variant_counts.setdefault(row["has_image"].strip().lower(), Counter())[variant] += 1
 
     for variant in sorted(VALID_VARIANTS):
         if variant_counts[variant] != EXPECTED_PER_VARIANT:
@@ -109,25 +227,60 @@ def validate_schedule(schedule_path: Path) -> dict[int, str]:
             f"{schedule_path}: tweet_number must cover 1..{EXPECTED_TWEETS}"
         )
 
+    sorted_datetimes = sorted(scheduled_datetimes)
+    if len({dt.date() for dt in sorted_datetimes}) != EXPECTED_TWEETS:
+        raise ValueError(f"{schedule_path}: schedule must have one tweet per day")
+
+    if {dt.time().isoformat() for dt in sorted_datetimes} != {EXPECTED_POSTING_TIME}:
+        raise ValueError(
+            f"{schedule_path}: all scheduled_at times must be {EXPECTED_POSTING_TIME}"
+        )
+
+    for previous, current in zip(sorted_datetimes, sorted_datetimes[1:]):
+        if (current.date() - previous.date()).days != 1:
+            raise ValueError(
+                f"{schedule_path}: scheduled_at dates must be consecutive days"
+            )
+
+    for weekday, counts in weekday_variant_counts.items():
+        if abs(counts["A"] - counts["B"]) > 1:
+            raise ValueError(
+                f"{schedule_path}: weekday {weekday} is imbalanced "
+                f"({dict(counts)})"
+            )
+
+    for topic, counts in topic_variant_counts.items():
+        if counts["A"] != counts["B"]:
+            raise ValueError(
+                f"{schedule_path}: topic {topic} must have equal A/B rows"
+            )
+
+    for has_image, counts in image_variant_counts.items():
+        if counts["A"] != counts["B"]:
+            raise ValueError(
+                f"{schedule_path}: has_image={has_image} must have equal A/B rows"
+            )
+
     return schedule
 
 
-def validate_results(results_path: Path, schedule: dict[int, str]) -> None:
-    rows = read_csv(results_path)
+def validate_results(results_path: Path, schedule: dict[int, dict[str, str]]) -> None:
+    fieldnames, rows = read_csv(results_path)
+    require_columns(results_path, fieldnames, ALL_COLUMNS)
+
     if not rows:
         raise ValueError(f"{results_path}: expected at least one result row")
-
-    missing_columns = REQUIRED_RESULT_COLUMNS - set(rows[0].keys())
-    if missing_columns:
-        raise ValueError(f"{results_path}: missing columns {sorted(missing_columns)}")
 
     seen_tweet_numbers: set[int] = set()
     variant_counts: Counter[str] = Counter()
 
     for row_number, row in enumerate(rows, start=2):
-        tweet_number = parse_tweet_number(row.get("tweet_number", ""), results_path, row_number)
-        variant = row.get("variant", "").strip()
-
+        tweet_number, variant = validate_common_fields(
+            row,
+            results_path,
+            row_number,
+            RESULT_REQUIRED_NONEMPTY,
+        )
         if tweet_number in seen_tweet_numbers:
             raise ValueError(
                 f"{results_path} row {row_number}: duplicate tweet_number {tweet_number}"
@@ -137,15 +290,14 @@ def validate_results(results_path: Path, schedule: dict[int, str]) -> None:
                 f"{results_path} row {row_number}: tweet_number {tweet_number} "
                 "is not in tweet_schedule.csv"
             )
-        if variant not in VALID_VARIANTS:
-            raise ValueError(
-                f"{results_path} row {row_number}: variant must be A or B"
-            )
-        if variant != schedule[tweet_number]:
-            raise ValueError(
-                f"{results_path} row {row_number}: variant {variant} does not match "
-                f"scheduled variant {schedule[tweet_number]}"
-            )
+
+        scheduled_row = schedule[tweet_number]
+        for column in METADATA_JOIN_COLUMNS:
+            if row.get(column, "").strip() != scheduled_row.get(column, "").strip():
+                raise ValueError(
+                    f"{results_path} row {row_number}: {column} does not match "
+                    "tweet_schedule.csv"
+                )
 
         for column in METRIC_COLUMNS:
             validate_metric(row.get(column, ""), column, results_path, row_number)

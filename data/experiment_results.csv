@@ -1,35 +1,35 @@
-tweet_number,variant,likes,replies,reposts,bookmarks,status
-1,A,3,0,1,0,sample
-2,B,5,1,1,0,sample
-3,B,6,2,1,1,sample
-4,A,2,1,0,0,sample
-5,B,4,1,0,1,sample
-6,B,7,2,2,1,sample
-7,A,3,1,0,0,sample
-8,A,3,1,0,0,sample
-9,A,4,0,1,0,sample
-10,A,2,0,0,1,sample
-11,B,6,1,1,1,sample
-12,A,3,1,1,0,sample
-13,B,4,2,0,0,sample
-14,A,5,1,1,0,sample
-15,A,2,0,0,0,sample
-16,B,6,2,1,0,sample
-17,A,3,1,0,1,sample
-18,B,5,0,1,1,sample
-19,A,4,1,0,0,sample
-20,B,7,1,2,1,sample
-21,A,2,1,0,0,sample
-22,B,6,2,1,1,sample
-23,A,3,0,1,0,sample
-24,B,8,2,2,1,sample
-25,B,6,1,1,0,sample
-26,B,5,1,0,1,sample
-27,A,3,0,1,0,sample
-28,B,5,2,1,0,sample
-29,A,4,1,0,1,sample
-30,B,6,1,2,1,sample
-31,B,7,2,1,0,sample
-32,B,7,2,1,0,sample
-33,A,3,1,0,0,sample
-34,A,5,1,1,1,sample
+tweet_number,variant,scheduled_at,posted_at,tweet_id,tweet_url,hook_text,topic,content_type,is_thread,has_image,likes,replies,reposts,bookmarks,status
+1,A,2026-06-01T09:00:00,2026-06-01T09:03:00,sample-001,https://x.com/example/status/sample-001,What if your tweet hooks were tested like ML models,experimentation,single,false,false,3,0,1,0,sample
+2,B,2026-06-02T09:00:00,2026-06-02T09:03:00,sample-002,https://x.com/example/status/sample-002,A better hook can be measured instead of guessed,experimentation,single,false,false,5,1,1,0,sample
+3,A,2026-06-03T09:00:00,2026-06-03T09:03:00,sample-003,https://x.com/example/status/sample-003,Can a creator account be tested like a product surface,creator_growth,single,false,false,2,1,0,0,sample
+4,B,2026-06-04T09:00:00,2026-06-04T09:03:00,sample-004,https://x.com/example/status/sample-004,A creator account is a product surface,creator_growth,single,false,false,6,2,1,1,sample
+5,A,2026-06-05T09:00:00,2026-06-05T09:03:00,sample-005,https://x.com/example/status/sample-005,Can data science improve content strategy,analytics,single,false,true,4,0,1,0,sample
+6,B,2026-06-06T09:00:00,2026-06-06T09:03:00,sample-006,https://x.com/example/status/sample-006,Better creator strategy starts with better measurement,analytics,single,false,true,6,1,2,1,sample
+7,A,2026-06-07T09:00:00,2026-06-07T09:03:00,sample-007,https://x.com/example/status/sample-007,Can a simple hook change reply behavior,copywriting,single,false,false,3,1,0,0,sample
+8,B,2026-06-08T09:00:00,2026-06-08T09:03:00,sample-008,https://x.com/example/status/sample-008,Testing hooks makes creative intuition sharper,copywriting,single,false,false,6,1,1,0,sample
+9,A,2026-06-09T09:00:00,2026-06-09T09:03:00,sample-009,https://x.com/example/status/sample-009,What if every post had a learning objective,creator_growth,single,false,false,3,1,0,0,sample
+10,B,2026-06-10T09:00:00,2026-06-10T09:03:00,sample-010,https://x.com/example/status/sample-010,Small content tests can reveal large audience signals,creator_growth,single,false,false,4,1,0,1,sample
+11,A,2026-06-11T09:00:00,2026-06-11T09:03:00,sample-011,https://x.com/example/status/sample-011,What would happen if creators used power analysis,statistics,single,false,true,2,0,0,1,sample
+12,B,2026-06-12T09:00:00,2026-06-12T09:03:00,sample-012,https://x.com/example/status/sample-012,Confidence intervals tell a better story than p values alone,statistics,single,false,true,7,1,2,1,sample
+13,A,2026-06-13T09:00:00,2026-06-13T09:03:00,sample-013,https://x.com/example/status/sample-013,How would you design a fair tweet experiment,experimentation,single,false,false,3,1,1,0,sample
+14,B,2026-06-14T09:00:00,2026-06-14T09:03:00,sample-014,https://x.com/example/status/sample-014,A clean schedule protects an experiment from bias,experimentation,single,false,false,4,2,0,0,sample
+15,A,2026-06-15T09:00:00,2026-06-15T09:03:00,sample-015,https://x.com/example/status/sample-015,Can creators borrow experimentation from product teams,product_thinking,single,false,true,2,0,0,0,sample
+16,B,2026-06-16T09:00:00,2026-06-16T09:03:00,sample-016,https://x.com/example/status/sample-016,Product analytics can make content decisions calmer,product_thinking,single,false,true,6,2,1,0,sample
+17,A,2026-06-17T09:00:00,2026-06-17T09:03:00,sample-017,https://x.com/example/status/sample-017,What would you test first on your creator account,creator_growth,single,false,false,3,1,0,1,sample
+18,B,2026-06-18T09:00:00,2026-06-18T09:03:00,sample-018,https://x.com/example/status/sample-018,A creator can run experiments without a large data team,creator_growth,single,false,false,6,2,1,1,sample
+19,A,2026-06-19T09:00:00,2026-06-19T09:03:00,sample-019,https://x.com/example/status/sample-019,How do you separate a lucky post from a better hook,statistics,single,false,false,4,1,0,0,sample
+20,B,2026-06-20T09:00:00,2026-06-20T09:03:00,sample-020,https://x.com/example/status/sample-020,Statistical testing makes content decisions less noisy,statistics,single,false,false,7,2,1,0,sample
+21,A,2026-06-21T09:00:00,2026-06-21T09:03:00,sample-021,https://x.com/example/status/sample-021,What if creators published like scientists,experimentation,single,false,true,2,1,0,0,sample
+22,B,2026-06-22T09:00:00,2026-06-22T09:03:00,sample-022,https://x.com/example/status/sample-022,Scientific posting beats random posting over time,experimentation,single,false,true,7,2,2,1,sample
+23,A,2026-06-23T09:00:00,2026-06-23T09:03:00,sample-023,https://x.com/example/status/sample-023,What if engagement was treated as a metric not a mood,analytics,single,false,false,2,0,0,1,sample
+24,B,2026-06-24T09:00:00,2026-06-24T09:03:00,sample-024,https://x.com/example/status/sample-024,A tweet experiment needs one primary metric,analytics,single,false,false,5,0,1,1,sample
+25,A,2026-06-25T09:00:00,2026-06-25T09:03:00,sample-025,https://x.com/example/status/sample-025,Which tweet style earns more meaningful engagement,copywriting,single,false,false,3,0,1,0,sample
+26,B,2026-06-26T09:00:00,2026-06-26T09:03:00,sample-026,https://x.com/example/status/sample-026,Question hooks are only useful when tested against a baseline,copywriting,single,false,false,6,1,1,1,sample
+27,A,2026-06-27T09:00:00,2026-06-27T09:03:00,sample-027,https://x.com/example/status/sample-027,Can a tweet schedule reduce experiment bias,experimentation,single,false,true,3,0,1,0,sample
+28,B,2026-06-28T09:00:00,2026-06-28T09:03:00,sample-028,https://x.com/example/status/sample-028,Random assignment makes creator experiments more honest,experimentation,single,false,true,5,2,1,0,sample
+29,A,2026-06-29T09:00:00,2026-06-29T09:03:00,sample-029,https://x.com/example/status/sample-029,What would your audience teach you if you tested consistently,creator_growth,single,false,false,4,1,0,1,sample
+30,B,2026-06-30T09:00:00,2026-06-30T09:03:00,sample-030,https://x.com/example/status/sample-030,The best content strategy compounds through measured learning,creator_growth,single,false,false,8,2,2,1,sample
+31,A,2026-07-01T09:00:00,2026-07-01T09:03:00,sample-031,https://x.com/example/status/sample-031,How can creators make content decisions less noisy,analytics,single,false,true,3,1,0,0,sample
+32,B,2026-07-02T09:00:00,2026-07-02T09:03:00,sample-032,https://x.com/example/status/sample-032,The goal is not virality but repeatable learning,analytics,single,false,true,7,2,1,0,sample
+33,A,2026-07-03T09:00:00,2026-07-03T09:03:00,sample-033,https://x.com/example/status/sample-033,What if your next 34 tweets were an experiment,statistics,single,false,false,5,1,1,1,sample
+34,B,2026-07-04T09:00:00,2026-07-04T09:03:00,sample-034,https://x.com/example/status/sample-034,A good experiment makes even a loss useful,statistics,single,false,false,7,2,1,0,sample

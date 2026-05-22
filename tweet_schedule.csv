@@ -1,35 +1,35 @@
-tweet_number,variant
-1,A
-2,B
-3,B
-4,A
-5,B
-6,B
-7,A
-8,A
-9,A
-10,A
-11,B
-12,A
-13,B
-14,A
-15,A
-16,B
-17,A
-18,B
-19,A
-20,B
-21,A
-22,B
-23,A
-24,B
-25,B
-26,B
-27,A
-28,B
-29,A
-30,B
-31,B
-32,B
-33,A
-34,A
+tweet_number,variant,scheduled_at,posted_at,tweet_id,tweet_url,hook_text,topic,content_type,is_thread,has_image,likes,replies,reposts,bookmarks,status
+1,A,2026-06-01T09:00:00,,,,What if your tweet hooks were tested like ML models,experimentation,single,false,false,,,,,scheduled
+2,B,2026-06-02T09:00:00,,,,A better hook can be measured instead of guessed,experimentation,single,false,false,,,,,scheduled
+3,A,2026-06-03T09:00:00,,,,Can a creator account be tested like a product surface,creator_growth,single,false,false,,,,,scheduled
+4,B,2026-06-04T09:00:00,,,,A creator account is a product surface,creator_growth,single,false,false,,,,,scheduled
+5,A,2026-06-05T09:00:00,,,,Can data science improve content strategy,analytics,single,false,true,,,,,scheduled
+6,B,2026-06-06T09:00:00,,,,Better creator strategy starts with better measurement,analytics,single,false,true,,,,,scheduled
+7,A,2026-06-07T09:00:00,,,,Can a simple hook change reply behavior,copywriting,single,false,false,,,,,scheduled
+8,B,2026-06-08T09:00:00,,,,Testing hooks makes creative intuition sharper,copywriting,single,false,false,,,,,scheduled
+9,A,2026-06-09T09:00:00,,,,What if every post had a learning objective,creator_growth,single,false,false,,,,,scheduled
+10,B,2026-06-10T09:00:00,,,,Small content tests can reveal large audience signals,creator_growth,single,false,false,,,,,scheduled
+11,A,2026-06-11T09:00:00,,,,What would happen if creators used power analysis,statistics,single,false,true,,,,,scheduled
+12,B,2026-06-12T09:00:00,,,,Confidence intervals tell a better story than p values alone,statistics,single,false,true,,,,,scheduled
+13,A,2026-06-13T09:00:00,,,,How would you design a fair tweet experiment,experimentation,single,false,false,,,,,scheduled
+14,B,2026-06-14T09:00:00,,,,A clean schedule protects an experiment from bias,experimentation,single,false,false,,,,,scheduled
+15,A,2026-06-15T09:00:00,,,,Can creators borrow experimentation from product teams,product_thinking,single,false,true,,,,,scheduled
+16,B,2026-06-16T09:00:00,,,,Product analytics can make content decisions calmer,product_thinking,single,false,true,,,,,scheduled
+17,A,2026-06-17T09:00:00,,,,What would you test first on your creator account,creator_growth,single,false,false,,,,,scheduled
+18,B,2026-06-18T09:00:00,,,,A creator can run experiments without a large data team,creator_growth,single,false,false,,,,,scheduled
+19,A,2026-06-19T09:00:00,,,,How do you separate a lucky post from a better hook,statistics,single,false,false,,,,,scheduled
+20,B,2026-06-20T09:00:00,,,,Statistical testing makes content decisions less noisy,statistics,single,false,false,,,,,scheduled
+21,A,2026-06-21T09:00:00,,,,What if creators published like scientists,experimentation,single,false,true,,,,,scheduled
+22,B,2026-06-22T09:00:00,,,,Scientific posting beats random posting over time,experimentation,single,false,true,,,,,scheduled
+23,A,2026-06-23T09:00:00,,,,What if engagement was treated as a metric not a mood,analytics,single,false,false,,,,,scheduled
+24,B,2026-06-24T09:00:00,,,,A tweet experiment needs one primary metric,analytics,single,false,false,,,,,scheduled
+25,A,2026-06-25T09:00:00,,,,Which tweet style earns more meaningful engagement,copywriting,single,false,false,,,,,scheduled
+26,B,2026-06-26T09:00:00,,,,Question hooks are only useful when tested against a baseline,copywriting,single,false,false,,,,,scheduled
+27,A,2026-06-27T09:00:00,,,,Can a tweet schedule reduce experiment bias,experimentation,single,false,true,,,,,scheduled
+28,B,2026-06-28T09:00:00,,,,Random assignment makes creator experiments more honest,experimentation,single,false,true,,,,,scheduled
+29,A,2026-06-29T09:00:00,,,,What would your audience teach you if you tested consistently,creator_growth,single,false,false,,,,,scheduled
+30,B,2026-06-30T09:00:00,,,,The best content strategy compounds through measured learning,creator_growth,single,false,false,,,,,scheduled
+31,A,2026-07-01T09:00:00,,,,How can creators make content decisions less noisy,analytics,single,false,true,,,,,scheduled
+32,B,2026-07-02T09:00:00,,,,The goal is not virality but repeatable learning,analytics,single,false,true,,,,,scheduled
+33,A,2026-07-03T09:00:00,,,,What if your next 34 tweets were an experiment,statistics,single,false,false,,,,,scheduled
+34,B,2026-07-04T09:00:00,,,,A good experiment makes even a loss useful,statistics,single,false,false,,,,,scheduled

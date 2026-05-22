@@ -1,0 +1,56 @@
+{
+  "experiment_name": "Question vs Statement Tweet Hooks",
+  "primary_metric": "engagement",
+  "variant_labels": {
+    "A": "Question hook",
+    "B": "Statement hook"
+  },
+  "summary": {
+    "A": {
+      "label": "Question hook",
+      "count": 17,
+      "mean": 4.2353,
+      "median": 4.0,
+      "std": 1.3933,
+      "total": 72.0
+    },
+    "B": {
+      "label": "Statement hook",
+      "count": 17,
+      "mean": 9.1765,
+      "median": 10.0,
+      "std": 1.976,
+      "total": 156.0
+    }
+  },
+  "comparison": {
+    "control_variant": "A",
+    "treatment_variant": "B",
+    "absolute_difference": 4.941176470588235,
+    "lift": 1.1666666666666665,
+    "welch_ttest": {
+      "statistic": -8.42637369126872,
+      "p_value": 2.948824540592636e-09
+    },
+    "mann_whitney": {
+      "statistic": 6.0,
+      "p_value": 1.6683066716644524e-06
+    },
+    "cohens_d": 2.8902223318692903,
+    "bootstrap_intervals": {
+      "mean_difference": {
+        "lower": 3.8235294117647065,
+        "upper": 6.000000000000001
+      },
+      "lift": {
+        "lower": 0.8117408585055644,
+        "upper": 1.5967802118440058
+      }
+    }
+  },
+  "recommendation": {
+    "status": "winner",
+    "winner_variant": "B",
+    "message": "Variant B clears the statistical and practical thresholds."
+  }
+}
