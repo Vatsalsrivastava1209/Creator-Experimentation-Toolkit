@@ -122,6 +122,25 @@ python validate_experiment.py
 python analyze_experiment.py
 ```
 
+## Deploy On Streamlit Cloud
+
+This app is ready for Streamlit Community Cloud in demo mode. It uses the
+committed synthetic sample data by default, so no secrets or API keys are
+required for the public dashboard.
+
+Use these settings:
+
+- Repository:
+  `Vatsalsrivastava1209/Scientific-A-B-Testing-for-Your-DS-ML-Creator-Account`
+- Branch: `main`
+- Main file path: `app.py`
+- Python runtime: `python-3.11` from `runtime.txt`
+- Secrets: none required for sample/demo mode
+
+After deployment, confirm the app shows the Overview, Experiment Design,
+Results, Evidence, and Raw Data tabs. The synthetic-data warning should remain
+visible until real X metrics replace the sample results.
+
 ## Data Contract
 
 Both `tweet_schedule.csv` and results files use this schema:
