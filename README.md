@@ -6,6 +6,17 @@ This project shows how A/B testing practices from product analytics can be used
 to test creator-content decisions with controlled assignment, validation,
 statistical testing, reports, and a dashboard.
 
+## Project Snapshot
+
+| | |
+|---|---|
+| **Business problem** | Test whether question-based or statement-based hooks improve creator engagement without relying on noisy post-to-post comparisons. |
+| **Quantified result** | In the **synthetic demo data**, statement hooks averaged **9.18** engagements versus **4.24** for question hooks: **+116.7% lift**, with a bootstrap lift interval of **81.2% to 159.7%**. |
+| **Method** | 34-day stratified assignment, balance validation, Welch and Mann-Whitney tests, Cohen's d, bootstrap confidence intervals, and a predeclared decision rule. |
+| **Demo** | Run `streamlit run app.py` for the Overview, Experiment Design, Results, Evidence, and Raw Data views. |
+| **Limitations** | The committed results are synthetic and the 34-post design is small; real recommendations require real posts collected under the fixed protocol. |
+| **Reproduce** | `pip install -r requirements.txt` → `python validate_experiment.py` → `python analyze_experiment.py` → `streamlit run app.py`. |
+
 ## Why This Exists
 
 X Analytics reports what happened to each post. This project tests whether a
@@ -130,8 +141,7 @@ required for the public dashboard.
 
 Use these settings:
 
-- Repository:
-  `Vatsalsrivastava1209/Scientific-A-B-Testing-for-Your-DS-ML-Creator-Account`
+- Repository: `Vatsalsrivastava1209/Creator-Experimentation-Toolkit`
 - Branch: `main`
 - Main file path: `app.py`
 - Python runtime: `python-3.11` from `runtime.txt`
